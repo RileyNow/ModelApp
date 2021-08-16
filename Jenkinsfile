@@ -1,10 +1,10 @@
 pipeline {
   agent any
   stages {
-    stage('') {
+    stage('Git') {
       steps {
         echo 'Build'
-        git(url: 'https://github.com/RileyNow/ModelApp', poll: true)
+        git(url: 'https://github.com/RileyNow/ModelApp', poll: true, branch: 'main')
       }
     }
 
