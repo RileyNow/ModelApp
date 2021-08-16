@@ -1,0 +1,38 @@
+{
+    "serviceId": "pay12345",
+    "featureToggles": {
+        "paymentRefund": "enabled",
+        "myPreferredPaymentMethods": "enabled",
+        "invoicePrinting": "disabled",
+        "payOnDelivery": "disabled",
+        "payByVoucher": "enabled"
+    },
+    "settings": {
+        "paypal": "disabled",
+        "applePay": "disabled",
+        "ogone": "enabled", 
+        "merchantId": "replaceThis",
+        "paymentMethods": "1,3,5,6",
+        "allowed.billing.countries": "74,76,88,136,139,176,197",
+        "creditcards.cacf.type.ids": "43,44,45,46",
+        "creditcards.oney.type.ids": "33,34,35,36",
+        "included.availabilityids": "99,199",
+        "included.availabilityids.cacf": "1,20,99,120,199",
+        "included.warrantiestypeids.cacf": "19002,19005,19006,19009,19010,19011,19014,19016",
+        "dbPort": "@@paymentService/database/dbPort@@",
+        "dbConnectionString": "@@paymentService/database/dbUserName@@:@@paymentService/database/dbPassword@@-@@paymentService/database/dbServer@@ @@paymentService/database/dbName@@", 
+        "dbConnectionStringBackup": "@@paymentService/database/dbUserName@@:@@paymentService/database/dbPassword@@-@@paymentService/database/backup/dbServer@@ @@paymentService/database/dbName@@",
+        "encryptionTypes":[ "AES", "3DES", "RSA" ],
+        "encryptionProtocols":[
+          {"type":"https","settings":{"enabled":"true","supported":"true"}},
+          {"type":"http","settings":{"enabled":"false","supported":"false"}}
+        ],
+        "TLS":[
+          {"version":"1.0","enabled":"false","allowedCipherSuites":[]},
+          {"version":"1.1","enabled":"false","allowedCipherSuites":[]},
+          {"version":"1.2","enabled":"true","allowedCipherSuites":["TLS_DHE_RSA_WITH_AES_256_CBC_SHA256","TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256","TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305","TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256"]},
+          {"version":"1.3","enabled":"true","allowedCipherSuites":["TLS_AES_256_GCM_SHA384","TLS_CHACHA20_POLY1305_SHA256","TLS_AES_128_GCM_SHA256","TLS_AES_128_CCM_8_SHA256"]}
+        ]
+    }
+      
+}

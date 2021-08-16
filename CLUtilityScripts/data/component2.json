@@ -1,0 +1,26 @@
+{
+    "googleApiKey": "hfjdqjfoqnlqcjoiqjnclvkqslkdn,qkls12",
+    "env.url.scheme": "https",
+    "env.vault.enabled": "false",
+    "env.vault.scheme": "http",
+    "env.vault.token": "869cd5f1-18f1-0e5f-5561-21e17ad28f73",
+    "env.zuul.routes.core.path": "/**",
+    "env.zuul.routes.core.url": "http://localhost:12550",
+    "env.zuul.routes.kibana.enabled": "true",
+    "env.zuul.routes.kibana.path": "/kibana/**",
+    "env.zuul.routes.kibana.url": "http://localhost:5601",
+    "envDataMasked": "true",
+    "featureToggle.externalTemplates": "false",
+    "featureToggle.incrementalDataLoading": "true",
+    "featureToggle.templateBasedLoading": "true",
+    "info.level": "error",
+    "LBMethod": "roundRobin",
+    "merchantId":"replaceThis",
+    "featureToggles": {
+        "SSO": "enabled",
+        "facebookLogin": "enabled",
+        "googleLogin": "disabled",
+        "twitterLogin": "disabled",
+        "gitLogin": "enabled"
+    }
+}
