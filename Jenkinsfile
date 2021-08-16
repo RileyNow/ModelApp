@@ -11,7 +11,8 @@ pipeline {
     stage('error') {
       steps {
         echo 'Start Build...'
-        sh './uploadToComponent.sh -h'
+        sh '''#!/bin/bash
+./uploadToComponent.sh -h'''
       }
     }
 
