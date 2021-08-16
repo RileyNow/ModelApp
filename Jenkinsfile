@@ -12,7 +12,7 @@ pipeline {
       steps {
         echo 'Start Build...'
         sh '''#!/bin/bash
-echo sh pwd'''
+pwd'''
       }
     }
 
