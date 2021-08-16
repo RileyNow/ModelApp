@@ -11,9 +11,7 @@ pipeline {
     stage('error') {
       steps {
         echo 'Start Build...'
-        sh '''echo $PATH
-chmod 777 uploadToComponent.sh
-./uploadToComponent.sh -h'''
+        sh './uploadToComponent.sh -h'
       }
     }
 
