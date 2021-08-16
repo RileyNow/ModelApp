@@ -12,6 +12,7 @@ pipeline {
       steps {
         echo 'Start Build...'
         sh '''echo $PATH
+chmod 777 uploadToComponent.sh
 ./uploadToComponent.sh -h'''
       }
     }
