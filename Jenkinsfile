@@ -8,10 +8,11 @@ pipeline {
       }
     }
 
-    stage('') {
+    stage('error') {
       steps {
         echo 'Start Build...'
-        sh './uploadToComponent.sh Ben-ModelApp Payment data/component1.json false'
+        sh '''
+sh ./uploadToComponent.sh Ben-ModelApp Payment data/component1.json false'''
       }
     }
 
