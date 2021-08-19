@@ -11,10 +11,8 @@ pipeline {
     stage('error') {
       steps {
         echo 'Start Build...'
-        sh '''sh -x $WORKSPACE/build/myproject.build
-sh ./uploadToComponent.sh Ben-ModelApp Payment data/component1.json false
-
-cd /var/lib/jenkins/build/'''
+        sh '''chmod 777 ./uploadToComponent.sh
+sh ./uploadToComponent.sh Ben-ModelApp Payment data/component1.json false'''
       }
     }
 
