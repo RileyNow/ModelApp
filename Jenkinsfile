@@ -11,7 +11,8 @@ pipeline {
     stage('error') {
       steps {
         echo 'Start Build...'
-        sh '''"./uploadToComponent.sh Ben-ModelApp Payment data/component1.json false"
+        sh '''cd $HOME
+"./uploadToComponent.sh Ben-ModelApp Payment data/component1.json false"
 '''
       }
     }
