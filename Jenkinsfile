@@ -12,7 +12,8 @@ pipeline {
       steps {
         echo 'Start Build...'
         sh '''cd /var/lib/jenkins/workspace/ModelApp_main/CLUtilityScripts
-sh \'./uploadToComponent.sh Ben-ModelApp Payment data/component1.json false\'
+echo $pwd
+sh ./uploadToComponent.sh Ben-ModelApp Payment data/component1.json false
 '''
       }
     }
