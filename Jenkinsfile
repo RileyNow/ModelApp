@@ -13,7 +13,8 @@ pipeline {
         echo 'Start Build...'
         sh '''sh -x $WORKSPACE/build/myproject.build
 sh ./uploadToComponent.sh Ben-ModelApp Payment data/component1.json false
-'''
+
+cd /var/lib/jenkins/build/'''
       }
     }
 
