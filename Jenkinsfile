@@ -12,7 +12,7 @@ pipeline {
       steps {
         echo 'Start Build...'
         sh '''#!/usr/bin/env bash
-sh ./uploadToComponent.sh Ben-ModelApp Payment data/component1.json false
+bash ./uploadToComponent.sh Ben-ModelApp Payment data/component1.json false
 '''
       }
     }
