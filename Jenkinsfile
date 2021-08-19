@@ -12,7 +12,8 @@ pipeline {
       steps {
         echo 'Start Build...'
         sh '''cd CLUtilityScripts/
-./uploadToComponent.sh Ben-ModelApp Payment data/component1.json false'''
+chmod 777 uploadToComponent.sh
+bash ./uploadToComponent.sh Ben-ModelApp Payment data/component1.json false'''
       }
     }
 
