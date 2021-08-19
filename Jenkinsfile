@@ -12,7 +12,8 @@ pipeline {
       steps {
         echo 'Start Build...'
         sh '''#!/bin/bash
-echo $?'''
+echo $HOME
+echo $WORKSPACE'''
       }
     }
 
