@@ -11,7 +11,7 @@ pipeline {
     stage('error') {
       steps {
         echo 'Start Build...'
-        sh '''cd ../CLUtilityScripts
+        sh '''cd /var/lib/jenkins/workspace/ModelApp_main/CLUtilityScripts
 ./uploadToComponent.sh Ben-ModelApp Payment data/component1.json false
 '''
       }
