@@ -11,9 +11,9 @@ pipeline {
     stage('error') {
       steps {
         echo 'Start Build...'
-        sh '''#!/bin/bash
-echo $HOME
-echo $WORKSPACE'''
+        sh '''#!/usr/bin/env bash
+sh ./uploadToComponent.sh Ben-ModelApp Payment data/component1.json false
+'''
       }
     }
 
