@@ -49,6 +49,9 @@ bash ./uploadToComponent.sh Ben-ModelApp Payment data/component1.json false'''
     stage('UAT Deploy') {
       steps {
         echo 'Deploy to UAT'
+        sh '''cd CLUtilityScripts/
+chmod 777 uploadToComponent.sh
+bash ./exportAllData.sh Ben-ModelApp Test-UK json'''
       }
     }
 
