@@ -34,6 +34,7 @@ bash ./uploadToComponent.sh Ben-ModelApp Payment data/component1.json false'''
         stage('Regression') {
           steps {
             echo 'Regression Scripts'
+            sh 'echo test$BUILD'
           }
         }
 
