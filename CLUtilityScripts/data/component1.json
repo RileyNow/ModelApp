@@ -1,11 +1,11 @@
 {
     "serviceId": "pay12345",
     "featureToggles": {
-        "paymentRefund": "enabled",
+        "paymentRefund": "disabled",
         "myPreferredPaymentMethods": "enabled",
         "invoicePrinting": "disabled",
         "payOnDelivery": "disabled",
-        "payByVoucher": "enabled"
+        "payByVoucher": "false"
     },
     "settings": {
         "paypal": "disabled",
