@@ -1,7 +1,7 @@
 #!/usr/local/bin/bash
 echo $BASH_VERSION
 
-source $(dirname "$0")/myShell.library
+source myShell.library
 
 function printHelp() {
 cat <<EOF
