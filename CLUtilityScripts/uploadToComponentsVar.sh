@@ -1,7 +1,7 @@
 #!/usr/local/bin/bash
 echo $BASH_VERSION
 
-source myShell.library
+source $(dirname "$0")/myShell.library
 
 function printHelp() {
 cat <<EOF
@@ -31,6 +31,9 @@ parseMySettingsFile
 checkForHelp $1
 getCLArgumentAppName $1
 getCLArgumentFileName $2
+autoCommit="true"
+autoPublish="publish_valid"  #publish_none,publish_valid or publish_all
+autoValidate="true"
 echo " ";echo -e "== uploading data from file \e[92m${fileName}\e[39m to \e[92mcomponents/var\e[39m folder for application \e[92m${appName}\e[39m "
 
 #== prepare the file for upload
@@ -38,12 +41,13 @@ applyReplaceThisLogic "${fileName}"
 
 #== perform the upload
 start=`date +%s`
-response=$(curl -s "${sncUrl}/api/sn_cdm/request/upload-and-commit/component/var?dataFormat=${dataFormat}&autoDelete=false&appName=${appName}" --request PUT --header "Accept:application/json" --header "Content-Type:text/plain" --user ${sncUser}:${sncPwd} --data-binary @testData.json)
+response=$(curl -s "${sncUrl}/api/sn_cdm/applications/uploads/components/vars?dataFormat=${dataFormat}&autoDelete=false&appName=${appName}&autoCommit=${autoCommit}&publishOption=${autoPublish}&autoValidate=${autoValidate}" --request PUT --header "Accept:application/json" --header "Content-Type:text/plain" --user ${sncUser}:${sncPwd} --data-binary @testData.json)
+echo $response
 end=`date +%s`
 echo -ne "upload time was `expr $end - $start` seconds."
 
 #== check if there is a valid requestId
-getRequestResult "${response}"
+getRequestResult "upload" "${response}"
 
 #== loop until requestId has been processed: result.state=completed
 loopUntilRequestStateComplete "30" "${requestId}"

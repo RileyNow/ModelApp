@@ -1,7 +1,7 @@
 #!/usr/local/bin/bash
 echo $BASH_VERSION
 
-source myShell.library
+source $(dirname "$0")/myShell.library
 
 function printHelp() {
 cat <<EOF
@@ -39,6 +39,9 @@ getCLArgumentDeployableName $2
 getCLArgumentNamePath $3
 getCLArgumentFileName $4
 getCLArgumentAutoDelete $5
+autoCommit="true"
+autoPublish="publish_valid"  #publish_none,publish_valid or publish_all
+autoValidate="true"
 
 echo " ";echo -e "== uploading data from file \e[92m${fileName}\e[39m to deployable \e[92m${deplName}\e[39m for application \e[92m${appName}\e[39m under path \e[92m${namePath}\e[39m"
 
@@ -47,12 +50,12 @@ applyReplaceThisLogic "${fileName}"
 
 #== perform the upload
 start=`date +%s`
-response=$(curl -s "${sncUrl}/api/sn_cdm/request/upload-and-commit/deployable?deployableName=${deplName}&dataFormat=${dataFormat}&autoDelete=${5}&appName=$appName&namePath=${namePath}" --request PUT --header "Accept:application/json" --header "Content-Type:text/plain" --user ${sncUser}:${sncPwd} --data-binary @testData.json)
+response=$(curl -s "${sncUrl}/api/sn_cdm/applications/uploads/deployables?deployableName=${deplName}&dataFormat=${dataFormat}&autoDelete=${5}&appName=$appName&namePath=${namePath}&autoCommit=${autoCommit}&publishOption=${autoPublish}&autoValidate=${autoValidate}" --request PUT --header "Accept:application/json" --header "Content-Type:text/plain" --user ${sncUser}:${sncPwd} --data-binary @testData.json)
 end=`date +%s`
 echo -ne "upload time was `expr $end - $start` seconds."
 
 #== check if there is a valid requestId
-getRequestResult "${response}"
+getRequestResult "upload" "${response}"
 
 #== loop until requestId has been processed: result.state=completed
 loopUntilRequestStateComplete "30" "${requestId}"

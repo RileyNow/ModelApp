@@ -1,8 +1,8 @@
 
 #== read the URL and connectionDetails from the mySettings.conf file
 function parseMySettingsFile() {
-    if [ -e mySettings.conf ]; then
-        source mySettings.conf
+    if [ -e $(dirname "$0")/mySettings.conf ]; then
+        source $(dirname "$0")/mySettings.conf
         echo -e "this script will run against \e[92m${sncUrl}\e[39m with user \e[92m${sncUser}\e[39m \n"
 #        if [[ ${sncUrl} != *"http://localhost:8080"* ]]; then
 #            askQuestionToContinue "Is this the instance you want to use?"
@@ -35,7 +35,7 @@ function applyReplaceThisLogic() {
 function loopUntilRequestStateComplete() {
     errorTimeOut="false"
     echo -n ".. wait for the request to be processed for max ${1} seconds: "
-    for i in `eval echo {0..${1}}` 
+    for i in `eval echo {0..${1}}`
         do
             if [[ "$i" -lt "15" ]];
             then
@@ -43,9 +43,7 @@ function loopUntilRequestStateComplete() {
             else
                 echo -ne "\e[41m+\e[49m" #print a red progress character
             fi
-            #echo "${sncUrl}/api/sn_cdm/response/${2} --request GET --header Accept:application/json --user ${sncUser}:${sncPwd}"
-            response=$(curl -s "${sncUrl}/api/sn_cdm/response/${2}" --request GET --header 'Accept:application/json' --user ${sncUser}:${sncPwd})
-
+			response=$(curl -s "${sncUrl}/api/sn_cdm/applications/upload-status/${2}" --request GET --header 'Accept:application/json' --user ${sncUser}:${sncPwd})
 			#echo $response;
 
             outputState=$(echo $response | jq --raw-output '.result.state')
@@ -65,14 +63,24 @@ function loopUntilRequestStateComplete() {
 }
 
 function getRequestResult() {
-    requestId=$(echo ${1} | jq --raw-output '.result.request_id')
+
+    case ${1} in
+        export)
+            requestId=$(echo ${2} | jq --raw-output '.result.request_id')
+            ;;
+        upload)
+            requestId=$(echo ${2} | jq --raw-output '.result.upload_id')
+            ;;
+        *)
+            requestId=$(echo ${2} | jq --raw-output '.result.request_id')
+    esac
 
     if [[ $requestId == "null" ]]; then
         echo -e "\e[41m!!Error\e[49m - no request_id received"
         echo -e "${1}"; echo " ";
         echo ${1} | jq .result; echo " ";
         exit
-    else 
+    else
         echo -e "The generated requestId is \e[92m${requestId}\e[39m "
     fi
 }
@@ -82,7 +90,7 @@ function compareResultNotContain() {
   	if [[ "$1" != *"$2"* ]]; then  #this checks that $2 is included in $1
   		echo -e " "
 	else
-	    
+
 	    echo -e "\e[41m!!FAILURE!!\e[49m - the response contains $2\n"
 	    echo -e "$1 \n"
 		exit
@@ -91,7 +99,7 @@ function compareResultNotContain() {
 
 function askQuestionToContinue() {
 	read -p "${1} press y to continue or n to exit : " cnt
-	if [[ $cnt != "y" ]]; then 
+	if [[ $cnt != "y" ]]; then
 		echo -e "exit script upon user request \n"
 		exit
 	fi
@@ -99,7 +107,7 @@ function askQuestionToContinue() {
 
 #== get Command Line Arguments
 function checkForHelp() {
-	#check if the first commandline argument is asking to dispaly the help 
+	#check if the first commandline argument is asking to display the help
 	if [[ "${1}" == "-h" || "${1}" == "--help" ]]; then
         printHelp
         exit
@@ -108,9 +116,9 @@ function checkForHelp() {
 
 function getCLArgumentAppName() {
 	#check if the application name was provided as input. If not ask for it
-	if [ ! -z $1 ] 
-	then 
-	    appName=$1 
+	if [ ! -z $1 ]
+	then
+	    appName=$1
 	else
 	    read -p "enter the application name: " appName
 	fi
@@ -120,9 +128,9 @@ function getCLArgumentAppName() {
 
 function getCLArgumentCompName() {
 	#check if the component name was provided as input. If not ask for it
-	if [ ! -z $1 ] 
-	then 
-	    compName=$1 
+	if [ ! -z $1 ]
+	then
+	    compName=$1
 	else
 	    read -p "enter the component name: " compName
 	fi
@@ -131,20 +139,20 @@ function getCLArgumentCompName() {
 
 function getCLArgumentNamePath() {
 	#check if the path name was provided as input. If not ask for it.
-	if [ ! -z $1 ] 
-	then 
-	    namePath=$1 
+	if [ ! -z $1 ]
+	then
+	    namePath=$1
 	else
-	    read -p "enter the path: " namePath
+	    read -p "enter the path in data model: " namePath
 	fi
 	echo -e "this script will run with namePath \e[92m${namePath}\e[39m"
 }
 
 function getCLArgumentDeployableName() {
 	#check if the deployable name was provided as input. If not ask for it
-	if [ ! -z $1 ] 
-	then 
-	    deplName=$1 
+	if [ ! -z $1 ]
+	then
+	    deplName=$1
 	else
 	    read -p "enter the deployableName to be uploaded: " deplName
 	fi
@@ -153,8 +161,8 @@ function getCLArgumentDeployableName() {
 
 function getCLArgumentFileName() {
 	#check if the file name was provided as input. If not ask for it
-	if [ ! -z $1 ] 
-	then 
+	if [ ! -z $1 ]
+	then
 	     fileName=${1}
 	else
 	    read -p "enter the file name to be uploaded: " fileName
@@ -171,41 +179,72 @@ function getCLArgumentFileName() {
     #check the file extension and use that for the dataFormat. If not found or not valid, ask for the dataFormat to be used
     dataFormat="${fileName##*.}"
     case $dataFormat in
-        #xml|json|yaml|txt|ini) #TODO: change the header call to text for the other extensions
-        json|yaml)
-        	echo -e "this script will upload the local file with dataFormat \e[92m${dataFormat}\e[39m" ;;
+        json)
+            echo -e "this script will upload the local file with dataFormat \e[92m${dataFormat}\e[39m"
+            ;;
+        yaml|yml)
+            echo -e "this script will upload the local file with dataFormat \e[92myaml\e[39m"
+            dataFormat="yaml"
+            ;;
+        xml|ini)
+            #TODO: change the header call to text for the other extensions
+            echo -e "this script will upload the local file with dataFormat \e[92m${dataFormat}\e[39m"
+            ;;
+        txt|props|properties)
+            #TODO: change the header call to text for the other extensions
+            echo -e "this script will upload the local file with dataFormat \e[92mproperties\e[39m"
+            dataFormat="properties"
+            ;;
         *)
-            echo -e "\e[41m!!\e[49m The file $fileName does not have a recognized extension. It should be one of xml|json|yaml|txt|ini"
+            echo -e "\e[41m!!\e[49m The file $fileName does not have a recognized extension. It should be one of xml|json|yaml|properties|ini"
             read -p "set the dataFormat of the file $fileName : " dataFormat
-            
+
             case $dataFormat in
-            xml|json|yaml|txt|ini)
+            xml|json|yaml|properties|ini)
                 echo -e "this script will upload with dataFormat \e[92m${dataFormat}\e[39m" ;;
             *)
                 echo -e "\e[41m!!error - the dataFormat $dataFormat provided file with name ${fileName} \e[49m is not supported\n"
                 echo -e "exit script \n"
                 exit ;;
-            esac    
+            esac
     esac
 
 }
 
+function getCLArgumentFilePath() {
+	#check if the file path was provided as input. If not ask for it
+	if [ ! -z $1 ]
+	then
+	     filePath=${1}
+	else
+	    read -p "enter the file path to be uploaded: " filePath
+	fi
+
+    #check if the provided path exist in the local folder
+    if [ ! -d $filePath ]; then
+        echo -e "\e[41m!!error - the provided path ${filePath} is not found in the working folder $PWD \e[49m \n"
+        echo -e "exit script \n"
+        exit
+    fi
+    echo -e "this script will upload the files from path \e[92m${filePath}\e[39m"
+}
+
 function getCLArgumentAutoDelete() {
 	#check if the autoDelete setting was provided as input. If not ask for it
-	if [ ! -z $1 ] 
-	then 
+	if [ ! -z $1 ]
+	then
 	     autoDelete=${1}
 	else
-	    read -p "enter booleanvalue (true or false) to define the autoDelete setting: " autoDelete
+	    read -p "enter boolean value (true or false) to define the autoDelete setting: " autoDelete
 	fi
     echo -e "this script will upload with autoDelete \e[92m${autoDelete}\e[39m"
 }
 
 function getCLArgumentFormat() {
-	#check if the deployable name was provided as input. If not ask for it	
-	if [ ! -z $1 ] 
-	then 
-	    expFormat=$1 
+	#check if the deployable name was provided as input. If not ask for it
+	if [ ! -z $1 ]
+	then
+	    expFormat=$1
 	else
 	    read -p "enter the format in which the data will be exported yaml,json,prop,ini,xml: " expFormat; echo " "
 	fi
@@ -213,10 +252,10 @@ function getCLArgumentFormat() {
 }
 
 function getCLArgumentExporterName() {
-	#check if the exporter name was provided as input. If not ask for it	
-	if [ ! -z $1 ] 
-	then 
-	    expName=$1 
+	#check if the exporter name was provided as input. If not ask for it
+	if [ ! -z $1 ]
+	then
+	    expName=$1
 	else
 	    read -p "enter the exporterName to be used for the export: " expName; echo " "
 	fi
@@ -224,14 +263,14 @@ function getCLArgumentExporterName() {
 }
 
 function getCLArgumentExporterParameter1() {
-    #check if an exporter argument was provided as input. If not ask for it	
-	if [ ! -z $2 ] 
-	then 
-	    expArg1=$2 
+    #check if an exporter argument was provided as input. If not ask for it
+	if [ ! -z $2 ]
+	then
+	    expArg1=$2
 	else
 	    read -p "enter the value for the input paramter ${1} : " expArg1; echo " "
 	fi
-	echo -e "this script will run with value for input parameter ${1} \e[92m${expArg1}\e[39m"    
+	echo -e "this script will run with value for input parameter ${1} \e[92m${expArg1}\e[39m"
 }
 
 
@@ -239,18 +278,23 @@ function getCLArgumentExporterParameter1() {
 #== parse response
 function printResponseProcessingState() {
     response=$(curl -s "${sncUrl}/api/sn_cdm/response/${1}" --request GET --header 'Accept:application/json' --user ${sncUser}:${sncPwd})
-    requestState=$(echo $response | jq --raw-output '.result.output.state')
+    requestState=$(echo $response | jq --raw-output '.result.state')
     if [[ ${requestState} == "failure" || -z "${requestState}" ]]; then
+        nbFilesKO=$(( $nbFilesKO + 1 ))
         echo -e "\e[41m!!error\e[49m - output state = failure"
-        echo $response | jq .result; echo " ";
-        resultError=$(echo $response | jq .result.output.errors)
+        resultError=$(echo $response | jq .result.output)
+    elif [[ $requestStatus == "error" ]]; then
+        nbFilesKO=$(( $nbFilesKO + 1 ))
+        outputState=$(echo $response | jq --raw-output '.result.processing_state')
+        echo " "; echo -e "== the response for request ${1} has processing_state \e[92m${outputState}\e[39m and state \e[92m${requestState}\e[39m "
+    elif [[ $requestStatus == "completed" ]]; then
+        nbFilesOK=$(( $nbFilesOK + 1 ))
+        outputState=$(echo $response | jq --raw-output '.result.processing_state')
+        echo " "; echo -e "== the response for request ${1} has processing_state \e[92m${outputState}\e[39m and state \e[92m${requestState}\e[39m "
     else
-        #== print the result on screen
-        if [[ $requestStatus != "failure" ]]; then
-            outputState=$(echo $response | jq --raw-output '.result.processing_state')
-            echo " "; echo -e "== the response for request ${1} has processing_state \e[92m${outputState}\e[39m and state \e[92m${requestState}\e[39m "
-            #echo $response | jq .result; echo " ";
-        fi
+        outputState=$(echo $response | jq --raw-output '.result.processing_state')
+        echo " "; echo -e "== the response for request ${1} has processing_state \e[92m${outputState}\e[39m and state \e[92m${requestState}\e[39m "
     fi
+    #== print the result on screen
+    echo $response | jq .result; echo " ";
 }
-

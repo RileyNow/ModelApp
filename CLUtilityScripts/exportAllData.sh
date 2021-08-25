@@ -2,7 +2,7 @@
 clear #start by cleaning the terminal window
 echo $BASH_VERSION
 
-source myShell.library
+source $(dirname "$0")/myShell.library
 
 function printHelp() {
 cat <<EOF
@@ -28,7 +28,7 @@ EOF
 #==========
 
 clear #start by cleaning the terminal window
-curDTstamp="$(date -u +%s)" 
+curDTstamp="$(date -u +%s)"
 parseMySettingsFile
 checkJqInstalled
 
@@ -44,7 +44,7 @@ echo " ";echo -e "the snapshot content of the \e[92m$deplName\e[39m deployable f
 response=$(curl -s "${sncUrl}/api/sn_cdm/request/export?deployableName=${deplName}&exporterName=${expName}&appName=${appName}&dataFormat=${expFormat}" --request POST --header 'Accept:application/json' --user ${sncUser}:${sncPwd})
 
 #== check if the exporter worked properly.
-getRequestResult "$response"
+getRequestResult "export" "${response}"
 
 #== loop until result.state=completed
 loopUntilRequestStateComplete "30" "$requestId"
@@ -72,28 +72,13 @@ else
 
 		echo " "; echo -e "== the response metadata is : "
 		#echo $response
-		
+
 		expExecId=$(echo $response | jq .result.request_id)
 		expStatus=$(echo $response | jq .result.state)
 		echo " "; echo -e "the exporter execution id is $expExecId and finished with status $expStatus."
 
 		echo " "; echo -e "== the pretty print response  is : "
-		if [[ $expFormat == "ini" ]]; then
-			echo $response | jq .result.output.exporter_result > export/exportData.ini
-			cat export/exportData.ini
-		fi
-		if [[ $expFormat == "json" ]]; then
-			echo $response | jq .result.output.exporter_result
-			echo $response | jq .result.output.exporter_result > export/exportData.json
-			#cat export/exportData.json
-		fi
-		if [[ $expFormat == "xml" ]]; then
-			echo $response | jq .result.output.exporter_result > export/exportData.xml
-			cat export/exportData.xml
-		fi
-		if [[ $expFormat == "yaml" ]]; then
-			echo $response | jq .result.output.exporter_result > export/exportData.yaml
-			cat export/exportData.yaml
-		fi
+		echo $response | jq -r '.result.output.exporter_result' > export/exportData.$expFormat
+		cat export/exportData.$expFormat
 	fi
 fi

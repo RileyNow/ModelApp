@@ -2,7 +2,7 @@
 clear #start by cleaning the terminal window
 echo $BASH_VERSION
 
-source myShell.library
+source $(dirname "$0")/myShell.library
 
 function printHelp() {
 cat <<EOF
@@ -39,15 +39,15 @@ checkForHelp $1
 getCLArgumentAppName $1
 getCLArgumentDeployableName $2
 getCLArgumentFormat $3
-getCLArgumentExporterName "returnDataForNodeNames"
-getCLArgumentExporterParameter1 "nodeNames" $4
+getCLArgumentExporterName "returnDataForNodeName"
+getCLArgumentExporterParameter1 "nodeName" $4
 echo " ";echo -e "the snapshot content of the \e[92m$deplName\e[39m deployable for application \e[92m${appName}\e[39m has been requested using the exporter \e[92m${expName}\e[39m in \e[92m${expFormat}\e[39m "
 
 #== run the exporter request and collect the result
 response=$(curl -s "${sncUrl}/api/sn_cdm/request/export?deployableName=${deplName}&exporterName=${expName}&args=%7B%22nodeName%22%3A%22${expArg1}%22%7D&appName=${appName}&dataFormat=${expFormat}" --request POST --header 'Accept:application/json' --user ${sncUser}:${sncPwd})
 
 #== check if the exporter worked properly.
-getRequestResult "$response"
+getRequestResult "export" "${response}"
 
 #== loop until result.state=completed
 loopUntilRequestStateComplete "30" "$requestId"
@@ -81,22 +81,8 @@ else
 		echo " "; echo -e "the exporter execution id is $expExecId and finished with status $expStatus."
 
 		echo " "; echo -e "== the pretty print response  is : "
-		if [[ $expFormat == "ini" ]]; then
-			echo $response | jq .result.output.exporter_result > export/exportData.ini
-			cat export/exportData.ini
-		fi
-		if [[ $expFormat == "json" ]]; then
-			echo $response | jq .result.output.exporter_result
-			echo $response | jq .result.output.exporter_result > export/exportData.json
-			#cat export/exportData.json
-		fi
-		if [[ $expFormat == "xml" ]]; then
-			echo $response | jq .result.output.exporter_result > export/exportData.xml
-			cat export/exportData.xml
-		fi
-		if [[ $expFormat == "yaml" ]]; then
-			echo $response | jq .result.output.exporter_result > export/exportData.yaml
-			cat export/exportData.yaml
+		echo $response | jq -r '.result.output.exporter_result' > export/exportData.$expFormat
+		cat export/exportData.$expFormatss
 		fi
 	fi
 fi
