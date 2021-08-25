@@ -14,7 +14,7 @@ pipeline {
         sh '''cd CLUtilityScripts/
 chmod 777 uploadToComponent.sh
 bash ./uploadToComponent.sh Ben-ModelApp Payment data/component1.json false
-bash ./uploadToComponent.sh Ben-ModelApp Wrapper data/wrapper.props false'''
+bash ./uploadToComponent.sh Ben-ModelApp Wrapper data/wrapper.ini false'''
       }
     }
 
