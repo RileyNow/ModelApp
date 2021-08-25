@@ -46,7 +46,7 @@ bash ./uploadToComponent.sh Ben-ModelApp Payment data/component1.json false'''
       }
     }
 
-    stage('UAT Deploy') {
+    stage('Test Env Deploy') {
       steps {
         echo 'Deploy to UAT'
         sh '''cd CLUtilityScripts/
@@ -72,7 +72,7 @@ bash ./exportAllData.sh Ben-ModelApp Test-UK json'''
       }
     }
 
-    stage('PRD Deploy') {
+    stage('PRD') {
       steps {
         echo 'PRD Deploy'
       }
