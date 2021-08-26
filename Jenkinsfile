@@ -8,7 +8,7 @@ pipeline {
       }
     }
 
-    stage('ConfigUpload') {
+    stage('CDMUpload') {
       steps {
         echo 'Start Build...'
         sh '''cd CLUtilityScripts/
@@ -46,7 +46,7 @@ bash ./uploadToComponent.sh Ben-ModelApp Payment data/payment.json false'''
       }
     }
 
-    stage('Test Env Deploy') {
+    stage('CDM Deploy') {
       steps {
         echo 'Deploy to UAT'
         sh '''cd CLUtilityScripts/
