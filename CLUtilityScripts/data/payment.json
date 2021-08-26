@@ -8,6 +8,7 @@
         "payByVoucher": "false"
     },
     "settings": {
+        "TestUrl":"http://localhost:8080",
         "paypal": "disabled",
         "applePay": "disabled",
         "ogone": "enabled", 
