@@ -37,7 +37,7 @@ getCLArgumentCompName $2
 getCLArgumentFileName $3
 getCLArgumentAutoDelete $4
 autoCommit="true"
-autoPublish="publish_all"  #publish_none,publish_valid or publish_all
+autoPublish="publish_valid"  #publish_none,publish_valid or publish_all
 autoValidate="true"
 echo " ";echo -e "== uploading data from file \e[92m${fileName}\e[39m to component \e[92m${compName}\e[39m for application \e[92m${appName}\e[39m "
 
