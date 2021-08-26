@@ -72,7 +72,7 @@ bash ./exportAllData.sh Ben-ModelApp Test-UK json'''
       }
     }
 
-    stage('PRD') {
+    stage('TST') {
       steps {
         echo 'PRD Deploy'
       }
