@@ -57,7 +57,7 @@ bash ./exportAllData.sh Ben-ModelApp Test-UK json'''
 
     stage('Functional') {
       parallel {
-        stage('Functional') {
+        stage('Functional FE') {
           steps {
             echo 'Functional Test Start'
           }
