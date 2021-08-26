@@ -50,7 +50,7 @@ bash ./uploadToComponent.sh Ben-ModelApp Payment data/payment.json false'''
       steps {
         echo 'Deploy to UAT'
         sh '''cd CLUtilityScripts/
-chmod 777 uploadToComponent.sh
+chmod 777 exportAllData.sh
 bash ./exportAllData.sh Ben-ModelApp Test-UK json'''
       }
     }
